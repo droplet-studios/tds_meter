@@ -6,7 +6,6 @@ import ssl
 import adafruit_minimqtt.adafruit_minimqtt as MQTT 
 
 import led
-from led import LED2
 
 from time import sleep
 
@@ -24,8 +23,9 @@ for i in range(MAX_RETRIES):
         print('Connected to Wi-Fi!')
         led.wifi_connected()
         break
-    except Exception as err:
+    except ConnectionError as err:
         print(err)
+        sleep(5)
 else:
     led.error()
 
@@ -35,32 +35,43 @@ MQTT_CLIENT = MQTT.MQTT(broker='192.168.1.40',
                         ssl_context=SSL_CONTEXT)
 
 # runs when MQTT connected
-def connected():
+def connected(mqtt_client, userdata, flags, rc):
     print('Connected to MQTT broker!')
     led.mqtt_connected()
 
 # runs when MQTT disconnected (attempts to reconnect MQTT)
-def disconnected():
+def disconnected(mqtt_client, userdata, rc):
     print('MQTT disconnected. Attempting reconnection...')
     led.mqtt_disconnected()
     connect_mqtt()
 
+# runs when MQTT message published
+def published(mqtt_client, userdata, topic, pid):
+    print('MQTT message published!')
+    led.mqtt_sent()
+
 MQTT_CLIENT.on_connect = connected
 MQTT_CLIENT.on_disconnect = disconnected
+MQTT_CLIENT.on_publish = published
 
 # function to repeatedly retry mqtt connections
 def connect_mqtt():
-    for i in range(MAX_RETRIES):
+    i = 0
+    while i < MAX_RETRIES:
+        i += 1
         try:
             print('Attempting MQTT connection...')
             MQTT_CLIENT.connect()
             break
-        except Exception as err:
+        except MQTT.MMQTTException as err:
             print(err)
+            sleep(5)
     else:
         led.error()
 
 def publish_mqtt(topic, message):
-    MQTT_CLIENT.publish(topic, message)
-    print('MQTT message published!')
-    led.mqtt_sent()
+    try:
+        MQTT_CLIENT.publish(topic, message)
+    except MQTT.MMQTTException as err:
+        print(err)
+        sleep(5)

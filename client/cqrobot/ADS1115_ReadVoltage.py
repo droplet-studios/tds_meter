@@ -44,6 +44,14 @@ def getMedianNum(iFilterLen):
 
 
 def read_voltage():
+	global analogBuffer
+	global analogBufferTemp
+	global analogBufferIndex
+	global copyIndex
+	global averageVoltage
+	global tdsValue
+	global temperature
+
 	analogSampleTimepoint = time.time()
 	printTimepoint = time.time()
 
@@ -66,7 +74,6 @@ def read_voltage():
 		compensationVolatge = averageVoltage / compensationCoefficient
 		tdsValue = (133.42 * compensationVolatge * compensationVolatge * compensationVolatge - 255.86 * compensationVolatge * compensationVolatge + 857.39 * compensationVolatge) * 0.5
 		print(" A1:%dppm "%tdsValue)
-
 		return tdsValue
 
 	#Get the Digital Value of Analog of selected channel
