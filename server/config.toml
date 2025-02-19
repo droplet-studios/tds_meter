@@ -1,0 +1,23 @@
+# MQTT topic to subscribe to
+mqtt_topic = "aerogarden/tds"
+
+# IP address or hostname of MQTT broker
+mqtt_broker = "localhost"
+
+# number of readings to save before taking average and logging
+reading_buffer_count = "100"
+
+# directory to save files to
+data_save_dir = "/home/jellyman/aerogarden/"
+
+# filename of csv to save readings to
+data_path = "aerogarden_data.csv"
+
+# minimum TDS level when sending notification (in ppm)
+min_tds = "700"
+
+# Pushover API key
+pushover_api = "avw2sv6zbv3rxiwhztkgcprii1njes"
+
+# Pushover user ID
+pushover_user = "uddt47snv8dbpav21ksv8r3x2kqw4o"
