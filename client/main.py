@@ -7,7 +7,6 @@ def main():
     connect_mqtt()
     while True:
         message = read_voltage()
-        if message is not None:
-            publish_mqtt(MQTT_TOPIC, message)
+        publish_mqtt(MQTT_TOPIC, message)
             
 main()
