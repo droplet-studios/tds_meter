@@ -19,8 +19,7 @@ ads1115.setAddr_ADS1115(0x48)
 ads1115.setGain(ADS1115_REG_CONFIG_PGA_6_144V)
 
 
-def getMedianNum(iFilterLen):
-	global analogBufferTemp
+def getMedianNum(iFilterLen, analogBufferTemp):
 	bTemp = 0.0
 	for j in range(iFilterLen-1):
 		for i in range(iFilterLen-j-1):
@@ -63,8 +62,8 @@ def read_voltage():
 			printTimepoint = time.time()
 			for copyIndex in range(30):
 				analogBufferTemp[copyIndex] = ads1115.readVoltage(1)['r']
-			print(" A1:%dmV "%getMedianNum(30))
-			averageVoltage = getMedianNum(30) * (VREF / 1024.0)
+			print(" A1:%dmV "%getMedianNum(30, analogBufferTemp))
+			averageVoltage = getMedianNum(30, analogBufferTemp) * (VREF / 1024.0)
 			compensationCoefficient = 1.0 + 0.02 * (temperature - 25.0)
 			compensationVolatge = averageVoltage / compensationCoefficient
 			tdsValue = (133.42 * compensationVolatge * compensationVolatge * compensationVolatge - 255.86 * compensationVolatge * compensationVolatge + 857.39 * compensationVolatge) * 0.5
